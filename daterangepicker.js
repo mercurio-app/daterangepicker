@@ -1156,6 +1156,29 @@
             this.isShowing = false;
         },
 
+        rangeApply: function(e) {
+            if (!this.isShowing) return;
+
+            //incomplete date selection, revert to last values
+            if (!this.endDate) {
+                this.startDate = this.oldStartDate.clone();
+                this.endDate = this.oldEndDate.clone();
+            }
+
+            //if a new date range was selected, invoke the user callback function
+            if (!this.startDate.isSame(this.oldStartDate) || !this.endDate.isSame(this.oldEndDate))
+                this.callback(this.startDate.clone(), this.endDate.clone(), this.chosenLabel);
+
+            //if picker is attached to a text input, update it
+            this.updateElement();
+
+            // $(document).off('.daterangepicker');
+            // $(window).off('.daterangepicker');
+            // this.container.hide();
+            // this.element.trigger('hide.daterangepicker', this);
+            // this.isShowing = false;
+        },
+
         toggle: function(e) {
             if (this.isShowing) {
                 this.hide();
@@ -1207,7 +1230,7 @@
 
                 if (!this.alwaysShowCalendars)
                     this.hideCalendars();
-                this.clickApply();
+                this.clickApplyRange();
             }
         },
 
@@ -1386,6 +1409,11 @@
 
         clickApply: function(e) {
             this.hide();
+            this.element.trigger('apply.daterangepicker', this);
+        },
+
+        clickApplyRange: function(e) {
+            this.rangeApply();
             this.element.trigger('apply.daterangepicker', this);
         },
 
